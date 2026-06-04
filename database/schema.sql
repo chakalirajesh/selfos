@@ -32,12 +32,10 @@ role VARCHAR(20) NOT NULL,
 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-```
 CONSTRAINT uq_auth_users_email UNIQUE (email),
 CONSTRAINT chk_auth_users_role CHECK (role IN ('ADMIN', 'USER')),
 CONSTRAINT chk_auth_users_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
 
-```
 
 );
 
@@ -50,12 +48,10 @@ revoked BOOLEAN NOT NULL DEFAULT FALSE,
 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-```
 CONSTRAINT uq_auth_refresh_tokens_token UNIQUE (token),
 CONSTRAINT fk_auth_refresh_tokens_user FOREIGN KEY (user_id) 
     REFERENCES auth_users(id) ON DELETE CASCADE
 
-```
 
 );
 
@@ -86,14 +82,12 @@ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 created_by UUID NOT NULL,
 updated_by UUID NOT NULL,
 
-```
 CONSTRAINT fk_prd_projects_user FOREIGN KEY (user_id)
     REFERENCES auth_users(id) ON DELETE CASCADE,
 CONSTRAINT chk_prd_projects_progress CHECK (progress BETWEEN 0 AND 100),
 CONSTRAINT chk_prd_projects_status CHECK (status IN ('PLANNED', 'ACTIVE', 'COMPLETED', 'ON_HOLD')),
 CONSTRAINT chk_prd_projects_dates CHECK (start_date IS NULL OR end_date IS NULL OR start_date <= end_date)
 
-```
 
 );
 
@@ -110,7 +104,6 @@ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 created_by UUID NOT NULL,
 updated_by UUID NOT NULL,
 
-```
 CONSTRAINT fk_prd_milestones_project FOREIGN KEY (project_id)
     REFERENCES prd_projects(id) ON DELETE CASCADE,
 CONSTRAINT chk_prd_milestones_status CHECK (status IN ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'MISSED')),
@@ -119,7 +112,6 @@ CONSTRAINT chk_prd_milestones_completion_sync CHECK (
     (status != 'COMPLETED' AND completed_at IS NULL)
 )
 
-```
 
 );
 
@@ -151,7 +143,6 @@ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 created_by UUID NOT NULL,
 updated_by UUID NOT NULL,
 
-```
 CONSTRAINT fk_tsk_tasks_user FOREIGN KEY (user_id)
     REFERENCES auth_users(id) ON DELETE CASCADE,
 CONSTRAINT fk_tsk_tasks_project FOREIGN KEY (project_id)
@@ -159,7 +150,6 @@ CONSTRAINT fk_tsk_tasks_project FOREIGN KEY (project_id)
 CONSTRAINT chk_tsk_tasks_priority CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
 CONSTRAINT chk_tsk_tasks_status CHECK (status IN ('TODO', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'))
 
-```
 
 );
 
@@ -185,14 +175,12 @@ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 created_by UUID NOT NULL,
 updated_by UUID NOT NULL,
 
-```
 CONSTRAINT fk_gol_goals_user FOREIGN KEY (user_id)
     REFERENCES auth_users(id) ON DELETE CASCADE,
 CONSTRAINT chk_gol_goals_progress CHECK (progress_percentage BETWEEN 0 AND 100),
 CONSTRAINT chk_gol_goals_status CHECK (status IN ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED')),
 CONSTRAINT chk_gol_goals_dates CHECK (start_date <= target_date)
 
-```
 
 );
 
@@ -217,14 +205,12 @@ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 created_by UUID NOT NULL,
 updated_by UUID NOT NULL,
 
-```
 CONSTRAINT fk_hab_habits_user FOREIGN KEY (user_id)
     REFERENCES auth_users(id) ON DELETE CASCADE,
 CONSTRAINT chk_hab_habits_frequency CHECK (target_frequency IN ('DAILY', 'WEEKLY')),
 CONSTRAINT chk_hab_habits_streak CHECK (streak_count >= 0),
 CONSTRAINT chk_hab_habits_rate CHECK (completion_rate BETWEEN 0.00 AND 100.00)
 
-```
 
 );
 
@@ -238,13 +224,11 @@ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 created_by UUID NOT NULL,
 updated_by UUID NOT NULL,
 
-```
 CONSTRAINT uq_hab_habit_logs_date UNIQUE (habit_id, log_date),
 CONSTRAINT chk_hab_habit_logs_status CHECK (status IN ('COMPLETED', 'MISSED')),
 CONSTRAINT fk_hab_habit_logs_habit FOREIGN KEY (habit_id) 
     REFERENCES hab_habits(id) ON DELETE CASCADE
 
-```
 
 );
 
@@ -273,13 +257,11 @@ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 created_by UUID NOT NULL,
 updated_by UUID NOT NULL,
 
-```
 CONSTRAINT fk_lrn_topics_user FOREIGN KEY (user_id)
     REFERENCES auth_users(id) ON DELETE CASCADE,
 CONSTRAINT chk_lrn_topics_completion CHECK (completion_percentage BETWEEN 0 AND 100),
 CONSTRAINT chk_lrn_topics_hours CHECK (hours_studied >= 0.00)
 
-```
 
 );
 
@@ -301,7 +283,6 @@ completion_date TIMESTAMPTZ,
 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-```
 CONSTRAINT fk_rdm_roadmap_user FOREIGN KEY (user_id)
     REFERENCES auth_users(id) ON DELETE CASCADE,
 CONSTRAINT chk_rdm_roadmap_topic_name CHECK (topic_name IN (
@@ -314,7 +295,6 @@ CONSTRAINT chk_rdm_roadmap_completion_sync CHECK (
     (status != 'COMPLETED' AND completion_date IS NULL)
 )
 
-```
 
 );
 
@@ -337,11 +317,9 @@ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 created_by UUID NOT NULL,
 updated_by UUID NOT NULL,
 
-```
 CONSTRAINT fk_not_notes_user FOREIGN KEY (user_id)
     REFERENCES auth_users(id) ON DELETE CASCADE
 
-```
 
 );
 
@@ -364,12 +342,10 @@ notes TEXT,
 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-```
 CONSTRAINT fk_car_tracker_user FOREIGN KEY (user_id)
     REFERENCES auth_users(id) ON DELETE CASCADE,
 CONSTRAINT chk_car_tracker_status CHECK (status IN ('APPLIED', 'INTERVIEW', 'REJECTED', 'OFFERED', 'HIRED'))
 
-```
 
 );
 
@@ -389,12 +365,10 @@ type VARCHAR(20) NOT NULL,
 read BOOLEAN NOT NULL DEFAULT FALSE,
 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-```
 CONSTRAINT fk_sys_notifications_user FOREIGN KEY (user_id)
     REFERENCES auth_users(id) ON DELETE CASCADE,
 CONSTRAINT chk_sys_notifications_type CHECK (type IN ('EMAIL', 'IN_APP'))
 
-```
 
 );
 
@@ -405,11 +379,9 @@ action VARCHAR(255) NOT NULL,
 ip_address VARCHAR(45),
 timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-```
 CONSTRAINT fk_sys_activity_logs_user FOREIGN KEY (user_id) 
     REFERENCES auth_users(id) ON DELETE SET NULL
 
-```
 
 );
 
