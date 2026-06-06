@@ -26,15 +26,6 @@ public class GoalController {
 
     private final GoalService goalService;
 
-    @GetMapping("/ping")
-    public String ping() {
-        return "GOALS OK";
-    }
-    @PostMapping("/test")
-public ResponseEntity<String> testPost() {
-    System.out.println("POST TEST HIT");
-    return ResponseEntity.ok("POST WORKS");
-}
     @GetMapping
 public ResponseEntity<List<GoalResponse>> getAllGoals(
         @AuthenticationPrincipal String userId
@@ -57,12 +48,6 @@ System.out.println("REQUEST = " + request);
         System.out.println("GOAL CONTROLLER HIT");
         GoalResponse response = goalService.createGoal(request, UUID.fromString(userId));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/test")
-    public String test() {
-        System.out.println("TEST ENDPOINT HIT");
-        return "OK";
     }
 
     @GetMapping("/{id}")

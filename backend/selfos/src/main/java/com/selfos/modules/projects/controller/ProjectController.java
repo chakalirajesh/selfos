@@ -32,12 +32,6 @@ public class ProjectController {
         @Valid @RequestBody CreateProjectRequest request,
         @AuthenticationPrincipal String userId
     ) {
-
-        System.out.println("USER ID = " + userId);
-
-        System.out.println("CONTROLLER HIT");
-        System.out.println("USER ID = " + userId);
-
         log.info("API Post Ingress: Intercepted project initialization payload request by user {}", userId);
 
         ProjectResponse response =
