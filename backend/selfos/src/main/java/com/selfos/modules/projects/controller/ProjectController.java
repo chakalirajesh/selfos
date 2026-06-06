@@ -40,12 +40,11 @@ public class ProjectController {
 
         log.info("API Post Ingress: Intercepted project initialization payload request by user {}", userId);
 
-        UUID testUserId = UUID.fromString(
-            "e472cd0a-9d45-41aa-b258-7a4cd7137612"
-        );
-
         ProjectResponse response =
-                projectService.createProject(request, testUserId);
+                projectService.createProject(
+                        request,
+                        UUID.fromString(userId)
+                );
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -53,16 +52,11 @@ public class ProjectController {
     @SuppressWarnings("unused")
     @GetMapping
     @Operation(summary = "Retrieve all contextual projects belonging to the active user", description = "Returns an absolute collection arrays slice restricted strictly to the caller's unique ID scope.")
-    public ResponseEntity<List<ProjectResponse>> getAllProjects(@AuthenticationPrincipal String userId) {
-
-        UUID testUserId = UUID.fromString(
-                "e472cd0a-9d45-41aa-b258-7a4cd7137612"
-        );
-
-        log.info("API Get Ingress: Processing batch list pull request query parameters for user {}", userId);
+    public ResponseEntity<List<ProjectResponse>> getAllProjects(
+            @AuthenticationPrincipal String userId) {
 
         List<ProjectResponse> responses =
-                projectService.getAllProjects(testUserId);
+                projectService.getAllProjects(UUID.fromString(userId));
 
         return ResponseEntity.ok(responses);
     }
@@ -73,13 +67,7 @@ public class ProjectController {
         @PathVariable UUID id,
         @AuthenticationPrincipal String userId
     ) {
-        UUID testUserId = UUID.fromString(
-                "e472cd0a-9d45-41aa-b258-7a4cd7137612"
-        );
-
-        ProjectResponse response =
-                projectService.getProject(id, testUserId);
-
+        ProjectResponse response = projectService.getProject(id, UUID.fromString(userId));
         return ResponseEntity.ok(response);
     }
 
@@ -90,12 +78,12 @@ public class ProjectController {
         @Valid @RequestBody UpdateProjectRequest request,
         @AuthenticationPrincipal String userId
     ) {
-        UUID testUserId = UUID.fromString(
-                "e472cd0a-9d45-41aa-b258-7a4cd7137612"
-        );
-
         ProjectResponse response =
-                projectService.updateProject(id, request, testUserId);
+                projectService.updateProject(
+                        id,
+                        request,
+                        UUID.fromString(userId)
+                );
 
         return ResponseEntity.ok(response);
     }
@@ -107,11 +95,11 @@ public class ProjectController {
             @AuthenticationPrincipal String userId
     ) {
         log.info("API Delete Ingress: Triggering permanent entity record elimination routine on database item: {}", id);
-        UUID testUserId = UUID.fromString(
-                "e472cd0a-9d45-41aa-b258-7a4cd7137612"
-        );
 
-        projectService.deleteProject(id, testUserId);
+        projectService.deleteProject(
+                id,
+                 UUID.fromString(userId)
+        );
         return ResponseEntity.noContent().build();
     }
 }
