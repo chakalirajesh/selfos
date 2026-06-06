@@ -15,4 +15,8 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, UUID> {
     
     // Guarantees data isolation checks during straight read access requests
     Optional<ProjectEntity> findByIdAndOwnerId(UUID id, UUID ownerId);
+
+    long countByOwnerId(UUID ownerId);
+
+    long countByOwnerIdAndStatus(UUID ownerId, String status);
 }

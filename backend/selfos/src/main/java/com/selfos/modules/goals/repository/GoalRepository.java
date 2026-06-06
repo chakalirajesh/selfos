@@ -15,4 +15,8 @@ public interface GoalRepository extends JpaRepository<GoalEntity, UUID> {
     
     // Validates cross-user tenant safety mapping directly on record access
     Optional<GoalEntity> findByIdAndUserId(UUID id, UUID userId);
+
+    long countByUserId(UUID userId);
+
+    long countByUserIdAndStatus(UUID userId, String status);
 }

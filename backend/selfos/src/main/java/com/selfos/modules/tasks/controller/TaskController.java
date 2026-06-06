@@ -7,6 +7,7 @@ import com.selfos.modules.tasks.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,8 +20,15 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<TaskResponse> createTask(
-            @RequestBody CreateTaskRequest request) {
-        return ResponseEntity.ok(taskService.createTask(request));
+        @RequestBody CreateTaskRequest request,
+        @AuthenticationPrincipal String userId
+    ) {
+        return ResponseEntity.ok(
+            taskService.createTask(
+                    request,
+                    UUID.fromString(userId)
+            )
+        );
     }
 
     @GetMapping

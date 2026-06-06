@@ -15,4 +15,8 @@ public interface HabitRepository extends JpaRepository<HabitEntity, UUID> {
     
     // Ensures vertical multi-tenant lookup protection bounds
     Optional<HabitEntity> findByIdAndUserId(UUID id, UUID userId);
+
+    long countByUserId(UUID userId);
+
+    long countByUserIdAndStatus(UUID userId, String status);
 }

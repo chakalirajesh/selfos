@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import com.selfos.modules.tasks.dto.UpdateTaskRequest;
+
 
 
 @Service
@@ -23,20 +23,19 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
 
     @Override
-    public TaskResponse createTask(CreateTaskRequest request) {
-
-       UUID testUserId = UUID.fromString(
-                "e472cd0a-9d45-41aa-b258-7a4cd7137612"
-        );
+        public TaskResponse createTask(
+                CreateTaskRequest request,
+                UUID userId
+        ) {
 
         TaskEntity task = TaskEntity.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .priority(request.getPriority())
                 .status("TODO")
-                .userId(testUserId)
-                .createdBy(testUserId)
-                .updatedBy(testUserId)
+                .userId(userId)
+                .createdBy(userId)
+                .updatedBy(userId)
                 .dueDate(request.getDueDate())
                 .createdAt(OffsetDateTime.now())
                 .updatedAt(OffsetDateTime.now())

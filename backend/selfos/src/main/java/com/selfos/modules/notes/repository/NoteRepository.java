@@ -15,4 +15,6 @@ public interface NoteRepository extends JpaRepository<NoteEntity, UUID> {
     
     // Verifies data isolation checks during resource retrieval
     Optional<NoteEntity> findByIdAndUserId(UUID id, UUID userId);
+
+    long countByUserId(UUID userId);
 }
