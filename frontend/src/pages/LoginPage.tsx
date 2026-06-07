@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/authApi";
+import MainLayout from "../layouts/MainLayout";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -37,30 +38,32 @@ export default function LoginPage() {
   };
 
   return (
-    <div>
-      <h1>SelfOS Login</h1>
+    <MainLayout>
+      <div>
+        <h1>SelfOS Login</h1>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-      <br />
+        <br />
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-      <br />
+        <br />
 
-      <button onClick={handleLogin}>
-        Login
-      </button>
-    </div>
+        <button onClick={handleLogin}>
+          Login
+        </button>
+      </div>
+    </MainLayout>
   );
 }

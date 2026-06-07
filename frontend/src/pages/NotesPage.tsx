@@ -7,6 +7,7 @@ export default function NotesPage() {
     const [notes, setNotes] = useState<any[]>([]);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const [editingId, setEditingId] = useState("");
 
     const fetchNotes = async () => {
 
@@ -62,6 +63,39 @@ export default function NotesPage() {
             console.error(error);
         }
     };
+    const updateNote = async () => {
+
+        try {
+
+            const token =
+                localStorage.getItem("accessToken");
+
+            await noteApi.put(
+                `/${editingId}`,
+                {
+                    title,
+                    content
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setEditingId("");
+            setTitle("");
+            setContent("");
+
+            fetchNotes();
+
+        } catch (error: any) {
+
+            console.log(error.response?.status);
+            console.log(error.response?.data);
+
+        }
+    };
 
     const deleteNote = async (id: string) => {
 
@@ -106,9 +140,21 @@ export default function NotesPage() {
 
                 <br />
 
-                <button onClick={createNote}>
-                    Create Note
-                </button>
+                {editingId ? (
+                    <button
+                        onClick={updateNote}
+                        className="bg-green-500 text-white p-2 rounded"
+                    >
+                        Update Note
+                    </button>
+                ) : (
+                    <button
+                        onClick={createNote}
+                        className="bg-blue-500 text-white p-2 rounded"
+                    >
+                        Create Note
+                    </button>
+                )}
 
                 <hr />
 
@@ -118,6 +164,17 @@ export default function NotesPage() {
                         <h3>{note.title}</h3>
 
                         <p>{note.content}</p>
+
+                        <button
+                            onClick={() => {
+                                setEditingId(note.id);
+                                setTitle(note.title);
+                                setContent(note.content);
+                            }}
+                            className="bg-yellow-500 text-white p-2 rounded mr-2"
+                        >
+                            Edit
+                        </button>
 
                         <button
                             onClick={() => deleteNote(note.id)}

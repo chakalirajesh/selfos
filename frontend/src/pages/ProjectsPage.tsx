@@ -8,6 +8,8 @@ export default function ProjectsPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
+    const [editingId, setEditingId] = useState("");
+
     const fetchProjects = async () => {
 
         try {
@@ -62,6 +64,40 @@ export default function ProjectsPage() {
             console.error(error);
         }
     };
+    const updateProject = async () => {
+
+        try {
+
+            const token =
+                localStorage.getItem("accessToken");
+
+            await projectApi.put(
+                `/${editingId}`,
+                {
+                    name,
+                    description,
+                    progress: 0,
+                    status: "PLANNED"
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setEditingId("");
+            setName("");
+            setDescription("");
+
+            fetchProjects();
+
+        } catch (error: any) {
+
+            console.log("STATUS", error.response?.status);
+            console.log("DATA", error.response?.data);
+
+        }
+    };
 
     const deleteProject = async (id: string) => {
 
@@ -107,9 +143,21 @@ export default function ProjectsPage() {
 
                 <br />
 
-                <button onClick={createProject}>
-                    Create Project
-                </button>
+                {editingId ? (
+                    <button
+                        onClick={updateProject}
+                        className="bg-green-500 text-white p-2 rounded"
+                    >
+                        Update Project
+                    </button>
+                ) : (
+                    <button
+                        onClick={createProject}
+                        className="bg-blue-500 text-white p-2 rounded"
+                    >
+                        Create Project
+                    </button>
+                )}
 
                 <hr />
 
@@ -121,7 +169,19 @@ export default function ProjectsPage() {
                         <p>{project.description}</p>
 
                         <button
+                            onClick={() => {
+                                setEditingId(project.id);
+                                setName(project.name);
+                                setDescription(project.description);
+                            }}
+                            className="bg-yellow-500 text-white p-2 rounded mr-2"
+                        >
+                            Edit
+                        </button>
+
+                        <button
                             onClick={() => deleteProject(project.id)}
+                            className="bg-red-500 text-white p-2 rounded"
                         >
                             Delete
                         </button>

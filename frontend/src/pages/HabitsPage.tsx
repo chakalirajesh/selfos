@@ -7,6 +7,7 @@ export default function HabitsPage() {
     const [habits, setHabits] = useState<any[]>([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [editingId, setEditingId] = useState("");
 
     const fetchHabits = async () => {
 
@@ -63,6 +64,42 @@ export default function HabitsPage() {
             console.error(error);
         }
     };
+    const updateHabit = async () => {
+
+        try {
+
+            const token =
+                localStorage.getItem("accessToken");
+
+            await habitApi.put(
+                `/${editingId}`,
+                {
+                    name,
+                    description,
+                    targetFrequency: 7,
+                    streakCount: 0,
+                    status: "ACTIVE"
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setEditingId("");
+            setName("");
+            setDescription("");
+
+            fetchHabits();
+
+        } catch (error: any) {
+
+            console.log(error.response?.status);
+            console.log(error.response?.data);
+
+        }
+    };
 
     const deleteHabit = async (id: string) => {
 
@@ -108,9 +145,21 @@ export default function HabitsPage() {
 
                 <br />
 
-                <button onClick={createHabit}>
-                    Create Habit
-                </button>
+                {editingId ? (
+                    <button
+                        onClick={updateHabit}
+                        className="bg-green-500 text-white p-2 rounded"
+                    >
+                        Update Habit
+                    </button>
+                ) : (
+                    <button
+                        onClick={createHabit}
+                        className="bg-blue-500 text-white p-2 rounded"
+                    >
+                        Create Habit
+                    </button>
+                )}
 
                 <hr />
 
@@ -120,7 +169,16 @@ export default function HabitsPage() {
                         <h3>{habit.name}</h3>
 
                         <p>{habit.description}</p>
-
+                        <button
+                            onClick={() => {
+                                setEditingId(habit.id);
+                                setName(habit.name);
+                                setDescription(habit.description);
+                            }}
+                            className="bg-yellow-500 text-white p-2 rounded mr-2"
+                        >
+                            Edit
+                        </button>
                         <button
                             onClick={() => deleteHabit(habit.id)}
                         >

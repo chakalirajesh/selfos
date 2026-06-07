@@ -60,6 +60,45 @@ export default function TasksPage() {
             console.error(error);
         }
     };
+    const updateTask = async () => {
+
+        try {
+
+            const token =
+                localStorage.getItem("accessToken");
+
+            await taskApi.put(
+                `/${editingId}`,
+                {
+                    title,
+                    description,
+                    priority: 1,
+                    status: "TODO",
+                    dueDate: "2026-12-31T23:59:59Z"
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setEditingId("");
+            setTitle("");
+            setDescription("");
+
+            fetchTasks();
+
+        } catch (error: any) {
+
+            console.log("FULL ERROR", error);
+
+            if (error.response) {
+                console.log("STATUS", error.response.status);
+                console.log("DATA", error.response.data);
+            }
+        }
+    };
     const deleteTask = async (id: string) => {
 
         try {
@@ -82,6 +121,7 @@ export default function TasksPage() {
 
     console.log("TASKS =", tasks);
     console.log("COUNT =", tasks.length);
+    const [editingId, setEditingId] = useState("");
 
     return (
         <MainLayout>
@@ -107,10 +147,21 @@ export default function TasksPage() {
 
                 <br />
 
-                <button onClick={createTask}>
-                    Create Task
-                </button>
-
+                {editingId ? (
+                    <button
+                        onClick={updateTask}
+                        className="bg-green-500 text-white p-2 rounded"
+                    >
+                        Update Task
+                    </button>
+                ) : (
+                    <button
+                        onClick={createTask}
+                        className="bg-blue-500 text-white p-2 rounded"
+                    >
+                        Create Task
+                    </button>
+                )}
                 <hr />
 
                 {tasks.map((task) => (
@@ -123,7 +174,19 @@ export default function TasksPage() {
                         <p>{task.status}</p>
 
                         <button
+                            onClick={() => {
+                                setEditingId(task.id);
+                                setTitle(task.title);
+                                setDescription(task.description);
+                            }}
+                            className="bg-yellow-500 text-white p-2 rounded mr-2"
+                        >
+                            Edit
+                        </button>
+
+                        <button
                             onClick={() => deleteTask(task.id)}
+                            className="bg-red-500 text-white p-2 rounded"
                         >
                             Delete
                         </button>

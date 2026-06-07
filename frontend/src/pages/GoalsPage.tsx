@@ -8,6 +8,8 @@ export default function GoalsPage() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
+    const [editingId, setEditingId] = useState("");
+
     const fetchGoals = async () => {
 
         try {
@@ -63,6 +65,42 @@ export default function GoalsPage() {
             console.error(error);
         }
     };
+    const updateGoal = async () => {
+
+        try {
+
+            const token =
+                localStorage.getItem("accessToken");
+
+            await goalApi.put(
+                `/${editingId}`,
+                {
+                    title,
+                    description,
+                    targetDate: "2026-12-31T23:59:59Z",
+                    progress: 0,
+                    status: "NOT_STARTED"
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setEditingId("");
+            setTitle("");
+            setDescription("");
+
+            fetchGoals();
+
+        } catch (error: any) {
+
+            console.log("STATUS", error.response?.status);
+            console.log("DATA", error.response?.data);
+
+        }
+    };
     const deleteGoal = async (id: string) => {
 
         try {
@@ -107,9 +145,21 @@ export default function GoalsPage() {
 
                 <br />
 
-                <button onClick={createGoal}>
-                    Create Goal
-                </button>
+                {editingId ? (
+                    <button
+                        onClick={updateGoal}
+                        className="bg-green-500 text-white p-2 rounded"
+                    >
+                        Update Goal
+                    </button>
+                ) : (
+                    <button
+                        onClick={createGoal}
+                        className="bg-blue-500 text-white p-2 rounded"
+                    >
+                        Create Goal
+                    </button>
+                )}
 
                 <hr />
 
@@ -121,6 +171,17 @@ export default function GoalsPage() {
                         <p>{goal.description}</p>
 
                         <hr />
+                        <button
+                            onClick={() => {
+                                setEditingId(goal.id);
+                                setTitle(goal.title);
+                                setDescription(goal.description);
+                            }}
+                            className="bg-yellow-500 text-white p-2 rounded mr-2"
+                        >
+                            Edit
+                        </button>
+
                         <button
                             onClick={() => deleteGoal(goal.id)}
                         >
