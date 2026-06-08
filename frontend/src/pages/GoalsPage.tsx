@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import goalApi from "../api/goalApi";
 import MainLayout from "../layouts/MainLayout";
+import GoalCard from "../components/goals/GoalCard";
 
 export default function GoalsPage() {
 
@@ -37,6 +38,16 @@ export default function GoalsPage() {
 
     const createGoal = async () => {
 
+        if (!title.trim()) {
+            alert("Goal title is required");
+            return;
+        }
+
+        if (!description.trim()) {
+            alert("Goal description is required");
+            return;
+        }
+
         try {
 
             const token =
@@ -66,6 +77,15 @@ export default function GoalsPage() {
         }
     };
     const updateGoal = async () => {
+        if (!title.trim()) {
+            alert("Goal title is required");
+            return;
+        }
+
+        if (!description.trim()) {
+            alert("Goal description is required");
+            return;
+        }
 
         try {
 
@@ -102,6 +122,9 @@ export default function GoalsPage() {
         }
     };
     const deleteGoal = async (id: string) => {
+        if (!window.confirm("Delete this item?")) {
+            return;
+        }
 
         try {
 
@@ -123,74 +146,99 @@ export default function GoalsPage() {
 
     return (
         <MainLayout>
-            <div>
+            <div className="space-y-8">
+                <div className="bg-white p-6 rounded-2xl shadow-lg">
 
-                <h1>Goals</h1>
+                    <div className="mb-8">
 
-                <input
-                    type="text"
-                    placeholder="Goal Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
+                        <h1 className="text-4xl font-bold text-green-600">
+                            Goals
+                        </h1>
 
-                <br />
-
-                <input
-                    type="text"
-                    placeholder="Goal Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
-
-                <br />
-
-                {editingId ? (
-                    <button
-                        onClick={updateGoal}
-                        className="bg-green-500 text-white p-2 rounded"
-                    >
-                        Update Goal
-                    </button>
-                ) : (
-                    <button
-                        onClick={createGoal}
-                        className="bg-blue-500 text-white p-2 rounded"
-                    >
-                        Create Goal
-                    </button>
-                )}
-
-                <hr />
-
-                {goals.map((goal) => (
-                    <div key={goal.id}>
-
-                        <h3>{goal.title}</h3>
-
-                        <p>{goal.description}</p>
-
-                        <hr />
-                        <button
-                            onClick={() => {
-                                setEditingId(goal.id);
-                                setTitle(goal.title);
-                                setDescription(goal.description);
-                            }}
-                            className="bg-yellow-500 text-white p-2 rounded mr-2"
-                        >
-                            Edit
-                        </button>
-
-                        <button
-                            onClick={() => deleteGoal(goal.id)}
-                        >
-                            Delete
-                        </button>
+                        <p className="text-slate-500 mt-2">
+                            Track your goals and achieve your targets.
+                        </p>
 
                     </div>
-                ))}
 
+                    <input
+                        type="text"
+                        placeholder="Goal Title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="border border-green-300 p-3 rounded-lg w-full mb-3"
+                    />
+
+                    <input
+                        type="text"
+                        placeholder="Goal Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className="border border-green-300 p-3 rounded-lg w-full mb-3"
+                    />
+                    <div className="flex gap-2">
+                        {editingId ? (
+                            <button
+                                onClick={updateGoal}
+                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition"
+                            >
+                                Update Goal
+                            </button>
+                        ) : (
+                            <button
+                                onClick={createGoal}
+                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition"
+                            >
+                                Create Goal
+                            </button>
+                        )}
+                        {editingId && (
+                            <button
+                                onClick={() => {
+                                    setEditingId("");
+                                    setTitle("");
+                                    setDescription("");
+                                }}
+                                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition"
+                            >
+                                Cancel
+                            </button>
+                        )}
+                    </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+
+                        {goals.map((goal) => (
+
+                            <GoalCard
+                                key={goal.id}
+                                goal={goal}
+                                onEdit={(selectedGoal) => {
+                                    setEditingId(selectedGoal.id);
+                                    setTitle(selectedGoal.title);
+                                    setDescription(selectedGoal.description);
+                                }}
+                                onDelete={deleteGoal}
+                            />
+
+                        ))}
+
+                    </div>
+                    {goals.length === 0 && (
+
+                        <div className="bg-white p-10 rounded-2xl shadow text-center">
+
+                            <h2 className="text-xl font-bold text-green-600">
+                                No Goals Yet
+                            </h2>
+
+                            <p className="text-slate-500 mt-2">
+                                Create your first goal.
+                            </p>
+
+                        </div>
+
+                    )}
+                </div>
             </div>
         </MainLayout>
     );

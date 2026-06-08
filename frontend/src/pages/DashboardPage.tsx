@@ -2,9 +2,17 @@ import { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import dashboardApi from "../api/dashboardApi";
 
+import DashboardChart from "../components/dashboard/DashboardChart";
+import RecentActivity from "../components/dashboard/RecentActivity";
+import StatCard from "../components/dashboard/StatCard";
+import GoalProgressCard from "../components/dashboard/GoalProgressCard";
+import RecentTasks from "../components/dashboard/RecentTasks";
+import { useNavigate } from "react-router-dom";
+
 export default function DashboardPage() {
 
   const [data, setData] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
 
@@ -32,67 +40,168 @@ export default function DashboardPage() {
     fetchDashboard();
 
   }, []);
-
   if (!data) {
-    return <h1>Loading...</h1>;
+    return (
+      <MainLayout>
+        <div className="flex justify-center items-center h-[60vh]">
+          <div className="text-xl font-semibold animate-pulse">
+            Loading Dashboard...
+          </div>
+        </div>
+      </MainLayout>
+    );
   }
+  const productivityScore =
+    data.totalTasks > 0
+      ? Math.round(
+        (data.completedTasks / data.totalTasks) * 100
+      )
+      : 0;
 
   return (
     <MainLayout>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-slate-800 dark:text-white">
+          Dashboard
+        </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <p className="text-slate-500 mt-2">
+          Welcome back 🚀 Here's your productivity overview.
+        </p>
+      </div>
 
-        <div className="bg-blue-500 text-white p-6 rounded-xl shadow">
-          <h2 className="text-lg font-semibold">
-            Tasks
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl mb-8">
+        <h2 className="text-3xl font-bold">
+          Welcome to SelfOS
+        </h2>
+
+        <p className="mt-3 text-lg">
+          Manage tasks, goals, projects, notes and habits in one place.
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+
+        <StatCard
+          title="Tasks"
+          value={data.totalTasks}
+          subtitle={`${data.completedTasks} completed`}
+          color="text-blue-600"
+        />
+
+        <StatCard
+          title="Goals"
+          value={data.totalGoals}
+          subtitle={`${data.completedGoals} completed`}
+          color="text-green-600"
+        />
+
+        <StatCard
+          title="Projects"
+          value={data.totalProjects}
+          subtitle={`${data.activeProjects} active`}
+          color="text-purple-600"
+        />
+
+        <StatCard
+          title="Notes"
+          value={data.totalNotes}
+          color="text-orange-600"
+        />
+
+        <StatCard
+          title="Habits"
+          value={data.totalHabits}
+          subtitle={`${data.activeHabits} active`}
+          color="text-red-600"
+        />
+
+      </div>
+      {/* Bottom Section */}
+      <div className="grid lg:grid-cols-2 gap-6">
+
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
+          <h2 className="text-xl font-bold mb-4">
+            Quick Actions
           </h2>
 
-          <p className="text-4xl font-bold mt-2">
-            {data.totalTasks}
-          </p>
+          <div className="grid grid-cols-2 gap-4">
+
+            <button
+              onClick={() => navigate("/tasks")}
+              className="bg-blue-600 text-white p-3 rounded-lg"
+            >
+              + New Task
+            </button>
+
+            <button
+              onClick={() => navigate("/goals")}
+              className="bg-green-600 text-white p-3 rounded-lg"
+            >
+              + New Goal
+            </button>
+
+            <button
+              onClick={() => navigate("/projects")}
+              className="bg-purple-600 text-white p-3 rounded-lg"
+            >
+              + New Project
+            </button>
+
+            <button
+              onClick={() => navigate("/notes")}
+              className="bg-orange-600 text-white p-3 rounded-lg"
+            >
+              + New Note
+            </button>
+
+          </div>
         </div>
 
-        <div className="bg-green-500 text-white p-6 rounded-xl shadow">
-          <h2 className="text-lg font-semibold">
-            Goals
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
+
+          <h2 className="text-xl font-bold mb-4">
+            Productivity Score
           </h2>
 
-          <p className="text-4xl font-bold mt-2">
-            {data.totalGoals}
-          </p>
-        </div>
+          <div className="flex items-center justify-center h-48">
 
-        <div className="bg-purple-500 text-white p-6 rounded-xl shadow">
-          <h2 className="text-lg font-semibold">
-            Projects
-          </h2>
+            <div className="w-36 h-36 rounded-full border-[12px] border-blue-600 flex items-center justify-center">
 
-          <p className="text-4xl font-bold mt-2">
-            {data.totalProjects}
-          </p>
-        </div>
+              <div className="text-center">
+                <h1 className="text-3xl font-bold">
+                  {productivityScore}%
+                </h1>
 
-        <div className="bg-orange-500 text-white p-6 rounded-xl shadow">
-          <h2 className="text-lg font-semibold">
-            Notes
-          </h2>
+                <p className="text-sm text-slate-500">
+                  Progress
+                </p>
+              </div>
 
-          <p className="text-4xl font-bold mt-2">
-            {data.totalNotes}
-          </p>
-        </div>
+            </div>
 
-        <div className="bg-red-500 text-white p-6 rounded-xl shadow">
-          <h2 className="text-lg font-semibold">
-            Habits
-          </h2>
+          </div>
 
-          <p className="text-4xl font-bold mt-2">
-            {data.totalHabits}
-          </p>
         </div>
 
       </div>
+      <div className="mt-8">
+        <DashboardChart dashboard={data} />
+      </div>
+      <div className="mt-8">
+        <RecentActivity />
+      </div>
+      <div className="grid lg:grid-cols-2 gap-6 mt-8">
+
+        <GoalProgressCard />
+
+        <RecentTasks />
+
+      </div>
+
 
     </MainLayout>
   );

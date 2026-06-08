@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import taskApi from "../api/taskApi";
 import MainLayout from "../layouts/MainLayout";
+import TaskCard from "../components/tasks/TaskCard";
 
 export default function TasksPage() {
 
     const [tasks, setTasks] = useState<any[]>([]);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [editingId, setEditingId] = useState("");
 
     const fetchTasks = async () => {
         try {
@@ -31,6 +34,12 @@ export default function TasksPage() {
     }, []);
 
     const createTask = async () => {
+        if (!title.trim()) {
+            alert("Task title is required");
+            return;
+        }
+
+        setLoading(true);
 
         try {
 
@@ -53,10 +62,14 @@ export default function TasksPage() {
 
             setTitle("");
             setDescription("");
+            setLoading(false);
 
             fetchTasks();
 
         } catch (error) {
+
+            setLoading(false);
+
             console.error(error);
         }
     };
@@ -100,7 +113,9 @@ export default function TasksPage() {
         }
     };
     const deleteTask = async (id: string) => {
-
+        if (!window.confirm("Delete this item?")) {
+            return;
+        }
         try {
 
             const token =
@@ -118,83 +133,104 @@ export default function TasksPage() {
             console.error(error);
         }
     };
-
-    console.log("TASKS =", tasks);
-    console.log("COUNT =", tasks.length);
-    const [editingId, setEditingId] = useState("");
-
     return (
         <MainLayout>
-            <div>
+            <div className="space-y-8">
 
-                <h1>Tasks</h1>
+                <div className="bg-white p-6 rounded-2xl shadow-lg">
 
-                <input
-                    type="text"
-                    placeholder="Task Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
+                    <div className="mb-8">
+                        <h1 className="text-4xl font-bold text-blue-600">
+                            Tasks
+                        </h1>
 
-                <br />
+                        <p className="text-slate-500 mt-2">
+                            Manage and track all your tasks.
+                        </p>
+                    </div>
 
-                <input
-                    type="text"
-                    placeholder="Task Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
+                    <input
+                        type="text"
+                        placeholder="Task Title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="border border-blue-300 p-3 rounded-lg w-full mb-3"
+                    />
 
-                <br />
+                    <input
+                        type="text"
+                        placeholder="Task Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className="border border-blue-300 p-3 rounded-lg w-full mb-3"
+                    />
 
-                {editingId ? (
-                    <button
-                        onClick={updateTask}
-                        className="bg-green-500 text-white p-2 rounded"
-                    >
-                        Update Task
-                    </button>
-                ) : (
-                    <button
-                        onClick={createTask}
-                        className="bg-blue-500 text-white p-2 rounded"
-                    >
-                        Create Task
-                    </button>
-                )}
-                <hr />
+                    <div className="flex gap-2">
 
-                {tasks.map((task) => (
-                    <div key={task.id}>
+                        {editingId ? (
+                            <button
+                                onClick={updateTask}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                            >
+                                Update Task
+                            </button>
+                        ) : (
+                            <button
+                                onClick={createTask}
+                                disabled={loading}
+                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+                            >
+                                {loading ? "Creating..." : "Create Task"}
+                            </button>
+                        )}
 
-                        <h3>{task.title}</h3>
-
-                        <p>{task.description}</p>
-
-                        <p>{task.status}</p>
-
-                        <button
-                            onClick={() => {
-                                setEditingId(task.id);
-                                setTitle(task.title);
-                                setDescription(task.description);
-                            }}
-                            className="bg-yellow-500 text-white p-2 rounded mr-2"
-                        >
-                            Edit
-                        </button>
-
-                        <button
-                            onClick={() => deleteTask(task.id)}
-                            className="bg-red-500 text-white p-2 rounded"
-                        >
-                            Delete
-                        </button>
-
-                        <hr />
+                        {editingId && (
+                            <button
+                                onClick={() => {
+                                    setEditingId("");
+                                    setTitle("");
+                                    setDescription("");
+                                }}
+                                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg"
+                            >
+                                Cancel
+                            </button>
+                        )}
 
                     </div>
-                ))}
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+
+                        {tasks.map((task) => (
+                            <TaskCard
+                                key={task.id}
+                                task={task}
+                                onEdit={(task) => {
+                                    setEditingId(task.id);
+                                    setTitle(task.title);
+                                    setDescription(task.description);
+                                }}
+                                onDelete={deleteTask}
+                            />
+                        ))}
+
+                    </div>
+
+                    {tasks.length === 0 && (
+                        <div className="bg-white p-10 rounded-2xl shadow text-center mt-8">
+
+                            <h2 className="text-xl font-bold text-blue-600">
+                                No Tasks Yet
+                            </h2>
+
+                            <p className="text-slate-500 mt-2">
+                                Create your first task.
+                            </p>
+
+                        </div>
+                    )}
+
+                </div>
 
             </div>
         </MainLayout>

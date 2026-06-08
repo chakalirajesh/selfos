@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import habitApi from "../api/habitApi";
 import MainLayout from "../layouts/MainLayout";
+import HabitCard from "../components/habits/HabitCard";
 
 export default function HabitsPage() {
 
@@ -35,6 +36,16 @@ export default function HabitsPage() {
     }, []);
 
     const createHabit = async () => {
+
+        if (!name.trim()) {
+            alert("Habit name is required");
+            return;
+        }
+
+        if (!description.trim()) {
+            alert("Habit description is required");
+            return;
+        }
 
         try {
 
@@ -102,7 +113,9 @@ export default function HabitsPage() {
     };
 
     const deleteHabit = async (id: string) => {
-
+        if (!window.confirm("Delete this item?")) {
+            return;
+        }
         try {
 
             const token =
@@ -123,73 +136,103 @@ export default function HabitsPage() {
 
     return (
         <MainLayout>
-            <div>
+            <div className="space-y-8">
+                <div className="bg-white p-6 rounded-2xl shadow-lg">
 
-                <h1>Habits</h1>
+                    <div className="mb-8">
+                        <h1 className="text-4xl font-bold">
+                            Habits
+                        </h1>
 
-                <input
-                    type="text"
-                    placeholder="Habit Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
+                        <p className="text-slate-500 mt-2">
+                            Build consistency and track daily habits.
+                        </p>
+                    </div>
 
-                <br />
+                    <input
+                        type="text"
+                        placeholder="Habit Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="border border-red-300 p-3 rounded-lg w-full mb-3"
+                    />
 
-                <input
-                    type="text"
-                    placeholder="Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
+                    <input
+                        type="text"
+                        placeholder="Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className="border border-red-300 p-3 rounded-lg w-full mb-3"
+                    />
 
-                <br />
+                    <div className="flex gap-2">
 
-                {editingId ? (
-                    <button
-                        onClick={updateHabit}
-                        className="bg-green-500 text-white p-2 rounded"
-                    >
-                        Update Habit
-                    </button>
-                ) : (
-                    <button
-                        onClick={createHabit}
-                        className="bg-blue-500 text-white p-2 rounded"
-                    >
-                        Create Habit
-                    </button>
-                )}
+                        {editingId ? (
+                            <button
+                                onClick={updateHabit}
+                                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
+                            >
+                                Update Habit
+                            </button>
+                        ) : (
+                            <button
+                                onClick={createHabit}
+                                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+                            >
+                                Create Habit
+                            </button>
+                        )}
 
-                <hr />
-
-                {habits.map((habit) => (
-                    <div key={habit.id}>
-
-                        <h3>{habit.name}</h3>
-
-                        <p>{habit.description}</p>
-                        <button
-                            onClick={() => {
-                                setEditingId(habit.id);
-                                setName(habit.name);
-                                setDescription(habit.description);
-                            }}
-                            className="bg-yellow-500 text-white p-2 rounded mr-2"
-                        >
-                            Edit
-                        </button>
-                        <button
-                            onClick={() => deleteHabit(habit.id)}
-                        >
-                            Delete
-                        </button>
-
-                        <hr />
+                        {editingId && (
+                            <button
+                                onClick={() => {
+                                    setEditingId("");
+                                    setName("");
+                                    setDescription("");
+                                }}
+                                className="bg-gray-500 text-white px-4 py-2 rounded-lg"
+                            >
+                                Cancel
+                            </button>
+                        )}
 
                     </div>
-                ))}
 
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+
+                        {habits.map((habit) => (
+
+                            <HabitCard
+                                key={habit.id}
+                                habit={habit}
+                                onEdit={(selectedHabit) => {
+                                    setEditingId(selectedHabit.id);
+                                    setName(selectedHabit.name);
+                                    setDescription(selectedHabit.description);
+                                }}
+                                onDelete={deleteHabit}
+                            />
+
+                        ))}
+
+                    </div>
+                    {habits.length === 0 && (
+
+                        <div className="bg-white p-10 rounded-2xl shadow text-center">
+
+                            <h2 className="text-xl font-bold">
+                                No Habits Yet
+                            </h2>
+
+                            <p className="text-slate-500 mt-2">
+                                Create your first habit.
+                            </p>
+
+                        </div>
+
+                    )}
+                </div>
             </div>
         </MainLayout>
     );

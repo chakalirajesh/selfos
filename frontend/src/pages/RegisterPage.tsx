@@ -1,12 +1,14 @@
 import { useState } from "react";
 import API from "../api/authApi";
-import MainLayout from "../layouts/MainLayout";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
 
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleRegister = async () => {
         try {
@@ -19,7 +21,8 @@ export default function RegisterPage() {
 
             console.log(response.data);
 
-            alert("Registration Successful");
+            toast.success("Registration Successful");
+            navigate("/login");
 
         } catch (error: any) {
 
@@ -29,46 +32,56 @@ export default function RegisterPage() {
                 console.log(error.response.data);
             }
 
-            alert("Registration Failed");
+            toast.error("Registration Failed");
         }
     };
-
     return (
-        <MainLayout>
-            <div>
-                <h1>SelfOS Register</h1>
+        <div className="min-h-screen bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 flex items-center justify-center p-6">
+
+            <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8">
+
+                <h1 className="text-4xl font-bold text-center mb-2">
+                    SelfOS
+                </h1>
+
+                <p className="text-center text-slate-500 mb-8">
+                    Create your account
+                </p>
 
                 <input
                     type="text"
                     placeholder="Full Name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
+                    className="border border-gray-300 p-3 rounded-xl w-full mb-4 outline-none focus:ring-2 focus:ring-blue-500"
                 />
-
-                <br />
 
                 <input
                     type="email"
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="border border-gray-300 p-3 rounded-xl w-full mb-4 outline-none focus:ring-2 focus:ring-blue-500"
                 />
-
-                <br />
 
                 <input
                     type="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="border border-gray-300 p-3 rounded-xl w-full mb-6 outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
-                <br />
-
-                <button onClick={handleRegister}>
+                <button
+                    onClick={handleRegister}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl font-semibold transition"
+                >
                     Register
                 </button>
+
             </div>
-        </MainLayout>
+
+        </div>
     );
+
 }
