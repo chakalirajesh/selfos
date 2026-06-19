@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: selfos-backend
+  namespace: selfos
+spec:
+  selector:
+    app: selfos-backend
+  ports:
+  - port: 8080
+    targetPort: 8080

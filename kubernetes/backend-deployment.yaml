@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: selfos-backend
+  namespace: selfos
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: selfos-backend
+
+  template:
+    metadata:
+      labels:
+        app: selfos-backend
+
+    spec:
+      containers:
+        - name: backend
+          image: selfos-backend:latest
+          imagePullPolicy: Never   # for local image
+          ports:
+            - containerPort: 8000
