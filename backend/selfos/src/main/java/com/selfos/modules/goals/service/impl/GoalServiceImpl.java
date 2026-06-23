@@ -33,7 +33,6 @@ public class GoalServiceImpl implements GoalService {
                 .description(request.getDescription())
                 .startDate(OffsetDateTime.now())
                 .targetDate(request.getTargetDate())
-                .progress(0)
                 .progressPercentage(0)
                 .status("NOT_STARTED")
                 .createdBy(userId)
@@ -74,7 +73,7 @@ public class GoalServiceImpl implements GoalService {
         entity.setTitle(request.getTitle());
         entity.setDescription(request.getDescription());
         entity.setTargetDate(request.getTargetDate());
-        entity.setProgress(request.getProgress());
+        entity.setProgressPercentage(request.getProgress());
         entity.setStatus(request.getStatus());
         entity.setUpdatedBy(userId);
 
@@ -99,7 +98,7 @@ public class GoalServiceImpl implements GoalService {
                 .title(entity.getTitle())
                 .description(entity.getDescription())
                 .targetDate(entity.getTargetDate())
-                .progress(entity.getProgress())
+                .progress(entity.getProgressPercentage())
                 .status(entity.getStatus())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())

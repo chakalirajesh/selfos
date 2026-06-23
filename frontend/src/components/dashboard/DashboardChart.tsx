@@ -7,7 +7,13 @@ import {
   Tooltip
 } from "recharts";
 
-export default function DashboardChart({ dashboard }) {
+type DashboardChartProps = {
+  dashboard: any;
+};
+
+export default function DashboardChart({
+  dashboard
+}: DashboardChartProps) {
 
   const chartData = [
     {

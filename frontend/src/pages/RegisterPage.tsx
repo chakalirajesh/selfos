@@ -11,15 +11,27 @@ export default function RegisterPage() {
     const navigate = useNavigate();
 
     const handleRegister = async () => {
+        if (!fullName.trim()) {
+            toast.error("Full Name is required");
+            return;
+        }
+
+        if (!email.trim()) {
+            toast.error("Email is required");
+            return;
+        }
+
+        if (!password.trim()) {
+            toast.error("Password is required");
+            return;
+        }
         try {
 
-            const response = await API.post("/register", {
+            await API.post("/register", {
                 fullName,
                 email,
                 password
             });
-
-            console.log(response.data);
 
             toast.success("Registration Successful");
             navigate("/login");
@@ -78,7 +90,15 @@ export default function RegisterPage() {
                 >
                     Register
                 </button>
-
+                <p className="text-center mt-6 text-slate-500">
+                    Already have an account?{" "}
+                    <span
+                        onClick={() => navigate("/login")}
+                        className="text-blue-600 font-semibold cursor-pointer hover:underline"
+                    >
+                        Login
+                    </span>
+                </p>
             </div>
 
         </div>

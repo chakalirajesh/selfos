@@ -25,7 +25,8 @@ public class TaskEntity {
 
     private String status;
 
-    private Integer priority;
+    @Column(name = "priority")
+    private String priority;
 
     @Column(name = "user_id")
     private UUID userId;

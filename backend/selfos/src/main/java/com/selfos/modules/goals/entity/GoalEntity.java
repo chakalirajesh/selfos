@@ -21,18 +21,14 @@ public class GoalEntity {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(name = "goal_name", nullable = false, length = 255)
     private String title;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "target_date")
+    @Column(name = "target_date", nullable = false)
     private OffsetDateTime targetDate;
-
-    @Column(name = "progress", nullable = false)
-    @Builder.Default
-    private Integer progress = 0;
 
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
@@ -66,9 +62,6 @@ public class GoalEntity {
 
         if (this.startDate == null)
             this.startDate = now;
-
-        if (this.progress == null)
-            this.progress = 0;
 
         if (this.progressPercentage == null)
             this.progressPercentage = 0;

@@ -80,12 +80,12 @@ export default function ProjectsPage() {
     const updateProject = async () => {
 
         if (!name.trim()) {
-            alert("Project name is required");
+            toast.error("Project name is required");
             return;
         }
 
         if (!description.trim()) {
-            alert("Project description is required");
+            toast.error("Project description is required");
             return;
         }
         try {

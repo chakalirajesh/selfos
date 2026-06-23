@@ -19,8 +19,66 @@ spec:
 
     spec:
       containers:
-        - name: backend
-          image: selfos-backend:latest
-          imagePullPolicy: Never   # for local image
-          ports:
-            - containerPort: 8000
+      - name: backend
+        image: selfos-backend:v7
+        imagePullPolicy: Never
+
+        ports:
+          - containerPort: 8080
+
+        env:
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: selfos-config
+                key: DB_HOST
+
+          - name: DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: selfos-config
+                key: DB_PORT
+
+          - name: DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: selfos-config
+                key: DB_NAME
+
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: selfos-secret
+                key: DB_USERNAME
+
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: selfos-secret
+                key: DB_PASSWORD
+
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: selfos-secret
+                key: JWT_SECRET
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 40
+          periodSeconds: 5

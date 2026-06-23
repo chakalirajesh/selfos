@@ -50,7 +50,7 @@ export default function TasksPage() {
                 {
                     title,
                     description,
-                    priority: 1,
+                    priority: "HIGH",
                     dueDate: "2026-12-31T23:59:59Z"
                 },
                 {

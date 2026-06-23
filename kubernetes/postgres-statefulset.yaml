@@ -1,11 +1,13 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 
 metadata:
   name: postgres
   namespace: selfos
 
 spec:
+  serviceName: postgres
+
   replicas: 1
 
   selector:
@@ -32,20 +34,21 @@ spec:
         - name: POSTGRES_PASSWORD
           value: postgres
 
+        ports:
+        - containerPort: 5432
+
         volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: postgres-storage
-
-        volumes:
         - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-pvc
+          mountPath: /var/lib/postgresql/data
 
-        resources:
-          requests:
-            cpu: "250m"
-            memory: "512Mi"
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-storage
 
-          limits:
-            cpu: "1000m"
-            memory: "1Gi"
+    spec:
+      accessModes:
+      - ReadWriteOnce
+
+      resources:
+        requests:
+          storage: 1Gi

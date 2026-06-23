@@ -1,0 +1,16 @@
+.git
+.gitignore
+
+frontend/node_modules
+frontend/dist
+
+backend/selfos/target
+
+**/*.log
+
+screenshorts
+docs
+
+helm
+jenkins
+monitoring
