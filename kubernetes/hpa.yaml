@@ -1,0 +1,49 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  creationTimestamp: "2026-06-23T10:34:13Z"
+  name: selfos-backend
+  namespace: selfos
+  resourceVersion: "82355"
+  uid: 43b40d43-045b-4faa-8812-2f7cf309d332
+spec:
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 50
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: selfos-backend
+status:
+  conditions:
+  - lastTransitionTime: "2026-06-23T11:47:00Z"
+    message: recommended size matches current size
+    reason: ReadyForNewScale
+    status: "True"
+    type: AbleToScale
+  - lastTransitionTime: "2026-06-23T10:34:28Z"
+    message: the HPA was able to successfully calculate a replica count from cpu resource
+      utilization (percentage of request)
+    reason: ValidMetricFound
+    status: "True"
+    type: ScalingActive
+  - lastTransitionTime: "2026-06-23T11:49:30Z"
+    message: the desired replica count is less than the minimum replica count
+    reason: TooFewReplicas
+    status: "True"
+    type: ScalingLimited
+  currentMetrics:
+  - resource:
+      current:
+        averageUtilization: 3
+        averageValue: 3m
+      name: cpu
+    type: Resource
+  currentReplicas: 2
+  desiredReplicas: 2
